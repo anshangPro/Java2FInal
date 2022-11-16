@@ -1,7 +1,6 @@
 package live.anshang.java2final.DTO;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,6 +12,8 @@ import java.util.List;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Setter
+@Getter
 public class Repository {
 
     @Id
@@ -20,6 +21,7 @@ public class Repository {
     private long id;
 
     String name;
+    String author;
 
     @OneToMany
     private List<Commit> commits = new ArrayList<>();

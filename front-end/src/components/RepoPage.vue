@@ -61,7 +61,7 @@
                     "
                   >
                     <h1 style="font-size: 4rem; color: brown">
-                      {{ json.length }}
+                      {{ dev_cnt }}
                     </h1>
                   </div>
                 </el-row>
@@ -91,12 +91,17 @@
                     "
                   >
                     <el-row :gutter="20" style="margin: 30px">
-                      <el-col :span="8" :offset="0" v-for="i in 9">
+                      <el-col
+                        :span="8"
+                        :offset="0"
+                        v-for="i in dev_names.length"
+                      >
                         <el-avatar
                           shape="square"
                           size="large"
                           :src="avatarUrls[i - 1]"
                           style="margin-bottom: 30px"
+                          @click="go(dev_home[i - 1])"
                         />
                       </el-col>
                     </el-row>
@@ -126,22 +131,101 @@
                 </el-row>
                 <!-- Top 9 图  -->
                 <el-row justify="center">
-                  <div id="chart1" style="width: 90%; height: 450px"></div>
+                  <div id="chart1" style="width: 95%; height: 520px"></div>
                 </el-row>
               </div>
             </el-row>
           </el-tab-pane>
           <el-tab-pane label="Issues" name="second"
-            ><div
-              style="
-                height: 72vh;
-                width: 100%;
-                background-color: black;
-                display: block;
-              "
-            ></div>
-            ></el-tab-pane
-          >
+            ><el-row>
+              <div
+                style="
+                  display: inline-block;
+                  /* background-color: antiquewhite; */
+                  height: 65vh;
+                  width: 38%;
+                  margin: 10px;
+                "
+              >
+                <!-- issue 数目 -->
+                <el-row justify="center" style="margin-bottom: 0px">
+                  <h2
+                    style="
+                      font-size: 2.3rem;
+                      margin-top: 0.5rem;
+                      margin-bottom: 0.5rem;
+                    "
+                  >
+                    Issue Count
+                  </h2>
+                </el-row>
+                <!-- issue count 展示区域 -->
+                <el-row justify="center">
+                  <div
+                    style="
+                      width: 80%;
+                      height: 100px;
+                      background-color: antiquewhite;
+                      opacity: 0.7;
+                      display: flex;
+                      flex-direction: row;
+                      align-items: center;
+                      justify-content: center;
+                    "
+                  >
+                    <h1 style="font-size: 4rem; color: brown">
+                      {{ 55 }}
+                    </h1>
+                  </div>
+                </el-row>
+                <!-- issue 数目 展示区域 -->
+                <el-row justify="center">
+                  <div
+                    style="
+                      width: 90%;
+                      height: 40vh;
+                      /* background-color: antiquewhite;   */
+                      opacity: 1;
+                      display: flex;
+                      flex-direction: row;
+                      align-items: center;
+                      justify-content: center;
+                    "
+                  >
+                    <div
+                      id="chart2"
+                      style="height: 350px; width: 350px; background-color: "
+                    ></div>
+                  </div>
+                </el-row>
+              </div>
+              <div
+                style="
+                  display: inline-block;
+                  /* background-color: antiquewhite; */
+                  height: 65vh;
+                  width: 58%;
+                  margin: 10px;
+                "
+              >
+                <!-- 典型解决事件 -->
+                <el-row justify="center" style="margin-bottom: 0px">
+                  <h2
+                    style="
+                      font-size: 2.3rem;
+                      margin-top: 0.5rem;
+                      margin-bottom: 0.5rem;
+                    "
+                  >
+                    Typical Issue Resolution Time
+                  </h2>
+                </el-row>
+                <!-- 典型解决时间 柱状图  -->
+                <el-row justify="center">
+                  <div id="chart3" style="width: 500px; height: 500px"></div>
+                </el-row>
+              </div> </el-row
+          ></el-tab-pane>
           <el-tab-pane label="Releases and Commits" name="third">
             <div
               style="
@@ -268,16 +352,215 @@ import json from "../data/developers.json";
 import type { TabsPaneContext } from "element-plus";
 import * as echarts from "echarts";
 import { fa } from "element-plus/es/locale";
+import { Namespaces } from "@vue/compiler-core";
 const route = useRoute();
 const router = useRouter();
 let repository_name = router.currentRoute.value.params["repo_name"] as string;
+let name = repository_name.split("^")[1];
 repository_name = repository_name.replace("^", "/");
+
+interface repo_developer {
+  id: number;
+  name: string;
+  avatar: string;
+  home: string;
+  commit: number;
+}
+
+let developers: repo_developer[] = reactive<repo_developer[]>([]);
+
+let dev_names = ref<string[]>([]);
+let dev_commits = ref<number[]>([]);
+let avatarUrls = ref<string[]>([]);
+let dev_home = ref<string[]>([]);
+let dev_cnt = ref(0);
 
 //
 const activeName = ref("first");
 const handleClick = (tab: TabsPaneContext, event: Event) => {
   console.log(tab, event);
 };
+
+//
+axios.get(`https://final.anshang.live/api/data/repo/${name}`).then((res) => {
+  dev_cnt.value = res.data.developers;
+});
+//请求
+axios
+  .get(`https://final.anshang.live/api/data/${name}/developer`)
+  .then((res) => {
+    for (var i in res.data) {
+      let a = res.data[i];
+      developers.push({
+        id: a.id,
+        name: a.name,
+        avatar: a.avatarUrl,
+        home: a.url,
+        commit: a.commits,
+      });
+      dev_names.value.push(a.name);
+      avatarUrls.value.push(a.avatarUrl);
+      dev_commits.value.push(a.commits);
+      dev_home.value.push(a.url);
+    }
+
+    //图表
+    setTimeout(function () {
+      type EChartsOption = echarts.EChartsOption;
+
+      var chartDom1 = document.getElementById("chart1")!;
+      var myChart1 = echarts.init(chartDom1);
+      var option1: EChartsOption;
+
+      option1 = {
+        grid: {
+          left: "20", // 固定左边刻度宽度
+          right: "10%",
+          bottom: "10%",
+          top: "10",
+          containLabel: true,
+        },
+        tooltip: {
+          trigger: "axis",
+          axisPointer: {
+            type: "shadow",
+          },
+        },
+        xAxis: {
+          max: "dataMax",
+        },
+        yAxis: {
+          inverse: true,
+          type: "category",
+          data: dev_names.value,
+        },
+        series: [
+          {
+            realtimeSort: true,
+            name: "total commits",
+            type: "bar",
+            data: dev_commits.value,
+          },
+        ],
+      };
+
+      option1 && myChart1.setOption(option1);
+
+      //饼图issue数量
+      var chartDom2 = document.getElementById("chart2")!;
+      var myChart2 = echarts.init(chartDom2);
+      var option2: EChartsOption;
+
+      option2 = {
+        tooltip: {
+          trigger: "item",
+        },
+        legend: {
+          top: "5%",
+          left: "center",
+        },
+        series: [
+          {
+            name: "Issue count",
+            type: "pie",
+            radius: ["37%", "70%"],
+            avoidLabelOverlap: false,
+            itemStyle: {
+              borderRadius: 10,
+              borderColor: "#fff",
+              borderWidth: 2,
+            },
+            label: {
+              show: false,
+              position: "center",
+            },
+            emphasis: {
+              label: {
+                show: true,
+                fontSize: "40",
+                fontWeight: "bold",
+              },
+            },
+            labelLine: {
+              show: false,
+            },
+            data: [
+              { value: 20, name: "Opening Issue" },
+              { value: 35, name: "Closed Issue" },
+            ],
+            center: ["50%", "50%"],
+          },
+        ],
+      };
+
+      option2 && myChart2.setOption(option2);
+
+      //柱状图展示各种时间
+      var chartDom3 = document.getElementById("chart3")!;
+      var myChart3 = echarts.init(chartDom3);
+      var option3: EChartsOption;
+
+      option3 = {
+        grid: {
+          top: "10px",
+          left: "10px",
+          right: "10px",
+          bottom: "10%",
+          containLabel: true,
+        },
+        xAxis: {
+          type: "category",
+          data: ["Average", "Extreme", "Difference", "Variance"],
+        },
+        yAxis: {
+          type: "value",
+        },
+        tooltip: {
+          trigger: "axis",
+          axisPointer: {
+            type: "shadow",
+          },
+        },
+        series: [
+          {
+            showBackground: true,
+            backgroundStyle: {
+              color: "rgba(180, 180, 180, 0.2)",
+            },
+            data: [
+              {
+                value: 100,
+                itemStyle: {
+                  color: "#95d475",
+                },
+              },
+              {
+                value: 150,
+                itemStyle: {
+                  color: " #fab6b6",
+                },
+              },
+              {
+                value: 130,
+                itemStyle: {
+                  color: " #f3d19e",
+                },
+              },
+              {
+                value: 110,
+                itemStyle: {
+                  color: " #b1b3b8",
+                },
+              },
+            ],
+            type: "bar",
+          },
+        ],
+      };
+
+      option3 && myChart3.setOption(option3);
+    }, 1);
+  });
 
 //
 const Timer = ref("");
@@ -299,100 +582,9 @@ onMounted(() => {
   }, 500);
 });
 
-let Developers_cnt = ref(0);
-Developers_cnt.value = json.length;
-let avatarUrls = ref<string[]>([]);
-
-//图表
-setTimeout(function () {
-  type EChartsOption = echarts.EChartsOption;
-
-  var chartDom = document.getElementById("chart1")!;
-  var myChart = echarts.init(chartDom);
-  var option: EChartsOption;
-
-  const data: number[] = [];
-  const names: string[] = [];
-  for (let i = 0; i < 9; ++i) {
-    // data.push(Math.round(Math.random() * 200));
-    let url: any = "";
-    if (json[i].avatar_url != undefined) {
-      url = json[i].avatar_url;
-    } else url = "";
-    avatarUrls.value.push(url);
-    data.push(json[i].contributions);
-    let name: any = "";
-    if (json[i].login != undefined) {
-      name = json[i].login;
-    } else name = json[i].name;
-    names.push(name);
-  }
-
-  option = {
-    grid: {
-      left: "20", // 固定左边刻度宽度
-      right: "10%",
-      bottom: "10%",
-      containLabel: true,
-    },
-    xAxis: {
-      max: "dataMax",
-    },
-    yAxis: {
-      type: "category",
-      data: names,
-      inverse: true,
-      animationDuration: 300,
-      animationDurationUpdate: 300,
-      max: 8, // only the largest 3 bars will be displayed
-    },
-    series: [
-      {
-        realtimeSort: true,
-        name: "X",
-        type: "bar",
-        data: data,
-        label: {
-          show: true,
-          position: "right",
-          valueAnimation: true,
-        },
-      },
-    ],
-    legend: {
-      show: false,
-    },
-    animationDuration: 0,
-    animationDurationUpdate: 3000,
-    animationEasing: "linear",
-    animationEasingUpdate: "linear",
-  };
-
-  function run() {
-    for (var i = 0; i < data.length; ++i) {
-      // if (Math.random() > 0.9) {
-      //   data[i] += Math.round(Math.random() * 2000);
-      // } else {
-      //   data[i] += Math.round(Math.random() * 200);
-      // }
-    }
-    myChart.setOption<echarts.EChartsOption>({
-      series: [
-        {
-          type: "bar",
-          data,
-        },
-      ],
-    });
-  }
-
-  setTimeout(function () {
-    run();
-  }, 0);
-  setInterval(function () {
-    run();
-  }, 3000);
-
-  option && myChart.setOption(option);
-}, 1);
+const go = (url: string) => {
+  axios.get(url).then((res) => {
+    window.location.href = res.data.html_url;
+  });
+};
 </script>

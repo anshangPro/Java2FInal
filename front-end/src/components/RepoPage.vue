@@ -258,8 +258,17 @@
                     :height="455"
                     :row-style="{ height: '81px' }"
                   >
-                    <el-table-column prop="type" label="Type" width="100" />
-                    <el-table-column prop="value" label="Value in days" />
+                    <el-table-column
+                      prop="type"
+                      label="Type"
+                      width="100"
+                      align="center"
+                    />
+                    <el-table-column
+                      prop="value"
+                      label="Value in days"
+                      align="center"
+                    />
                   </el-table>
                 </el-row>
               </div> </el-row
@@ -594,9 +603,6 @@ axios
     var option2: EChartsOption;
 
     option2 = {
-      tooltip: {
-        trigger: "item",
-      },
       legend: {
         top: "5%",
         left: "center",

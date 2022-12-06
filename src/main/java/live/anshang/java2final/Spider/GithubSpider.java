@@ -13,8 +13,6 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
-
 import java.util.regex.*;
 
 public class GithubSpider {
@@ -23,7 +21,7 @@ public class GithubSpider {
     public static void main(String[] args) {
         getInfoByRepoURL("gnembon", "fabric-carpet");
     }
-    private static Pattern pattern = Pattern.compile("\\[.*\\]", Pattern.DOTALL);
+    private static final Pattern pattern = Pattern.compile("\\[.*\\]", Pattern.DOTALL);
 
     public static Repository getInfoByRepoURL(String author, String repo) {
 
@@ -34,8 +32,6 @@ public class GithubSpider {
         crabIssue(author, repo, repository);
         crabRelease(author, repo, repository);
         crabCommit(author, repo, repository);
-
-        int a = 1;
 
         return repository;
     }
@@ -66,7 +62,7 @@ public class GithubSpider {
                 page++;
             }
         } catch (IOException e) {
-            System.out.println("No issue");;
+            System.out.println("No issue");
         }
     }
 
@@ -92,7 +88,7 @@ public class GithubSpider {
                 page++;
             }
         } catch (IOException e) {
-            System.out.println("No issue");;
+            System.out.println("No release");
         }
     }
 
@@ -125,6 +121,9 @@ public class GithubSpider {
                         au = new Developer();
                         developers.add(au);
                         developerHashMap.put(authorName, au);
+                        authorObj = json.getJSONObject("author");
+                        au.setUrl(authorObj.getString("url"));
+                        au.setAvatarUrl(authorObj.getString("avatar_url"));
                         au.setName(authorName);
                         au.setCommits(1);
                     }
@@ -134,7 +133,7 @@ public class GithubSpider {
                 page++;
             }
         } catch (IOException e) {
-            System.out.println("No commit");;
+            System.out.println("No commit");
         }
     }
 

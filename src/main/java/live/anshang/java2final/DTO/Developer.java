@@ -6,9 +6,6 @@ import lombok.*;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -24,5 +21,9 @@ public class Developer {
     String name;
 
     private int commits = 0;
+
+    private String url;
+
+    private String avatarUrl;
 
 }

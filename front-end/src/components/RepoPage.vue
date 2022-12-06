@@ -136,8 +136,9 @@
               </div>
             </el-row>
           </el-tab-pane>
-          <el-tab-pane label="Issues" name="second"
+          <el-tab-pane label="Issues Overview" name="second"
             ><el-row>
+              <!-- 饼图 -->
               <div
                 style="
                   display: inline-block;
@@ -174,7 +175,7 @@
                     "
                   >
                     <h1 style="font-size: 4rem; color: brown">
-                      {{ 55 }}
+                      {{ issue_cnt }}
                     </h1>
                   </div>
                 </el-row>
@@ -199,6 +200,7 @@
                   </div>
                 </el-row>
               </div>
+              <!-- 柱状图 -->
               <div
                 style="
                   display: inline-block;
@@ -217,7 +219,7 @@
                       margin-bottom: 0.5rem;
                     "
                   >
-                    Typical Issue Resolution Time
+                    Typical Resolution Time
                   </h2>
                 </el-row>
                 <!-- 典型解决时间 柱状图  -->
@@ -226,7 +228,64 @@
                 </el-row>
               </div> </el-row
           ></el-tab-pane>
-          <el-tab-pane label="Releases and Commits" name="third">
+          <el-tab-pane label="Issues Page" name="third"
+            ><el-row justify="center">
+              <!-- open issue -->
+              <div
+                style="
+                  display: inline-block;
+                  background-color: black;
+                  height: 65vh;
+                  width: 45%;
+                  margin: 10px;
+                "
+              >
+                <!-- issue 详情 -->
+                <el-row justify="center" style="margin-bottom: 0px">
+                  <h2
+                    style="
+                      font-size: 2.3rem;
+                      margin-top: 0.5rem;
+                      margin-bottom: 0.5rem;
+                    "
+                  >
+                    Opening Issues
+                  </h2>
+                </el-row>
+                <!-- issue详情展示 -->
+                <el-row justify="center">
+                  <div id="chart3" style="width: 500px; height: 500px"></div>
+                </el-row>
+              </div>
+              <!-- close issue -->
+              <div
+                style="
+                  display: inline-block;
+                  background-color: black;
+                  height: 65vh;
+                  width: 45%;
+                  margin: 10px;
+                "
+              >
+                <!-- issue 详情 -->
+                <el-row justify="center" style="margin-bottom: 0px">
+                  <h2
+                    style="
+                      font-size: 2.3rem;
+                      margin-top: 0.5rem;
+                      margin-bottom: 0.5rem;
+                    "
+                  >
+                    Closed Issues
+                  </h2>
+                </el-row>
+                <!-- issue详情展示 -->
+                <el-row justify="center">
+                  <div id="chart3" style="width: 500px; height: 500px"></div>
+                </el-row>
+              </div> </el-row
+          ></el-tab-pane>
+          <el-tab-pane label="Releases and Commits" name="fourth">
             <div
               style="
                 height: 72vh;
@@ -346,18 +405,25 @@ h1 {
 
 <script lang="ts" setup>
 import { useRoute, useRouter } from "vue-router";
-import { reactive, ref, onMounted, h } from "vue";
+import { reactive, ref } from "vue";
 import axios from "axios";
-import json from "../data/developers.json";
 import type { TabsPaneContext } from "element-plus";
 import * as echarts from "echarts";
-import { fa } from "element-plus/es/locale";
-import { Namespaces } from "@vue/compiler-core";
+
 const route = useRoute();
 const router = useRouter();
 let repository_name = router.currentRoute.value.params["repo_name"] as string;
 let name = repository_name.split("^")[1];
 repository_name = repository_name.replace("^", "/");
+let developers: repo_developer[] = reactive<repo_developer[]>([]);
+let dev_names = ref<string[]>([]);
+let dev_commits = ref<number[]>([]);
+let avatarUrls = ref<string[]>([]);
+let dev_home = ref<string[]>([]);
+let dev_cnt = ref(0);
+let issue_cnt = ref(0);
+let open_cnt = ref(0);
+let close_cnt = ref(0);
 
 interface repo_developer {
   id: number;
@@ -367,23 +433,17 @@ interface repo_developer {
   commit: number;
 }
 
-let developers: repo_developer[] = reactive<repo_developer[]>([]);
-
-let dev_names = ref<string[]>([]);
-let dev_commits = ref<number[]>([]);
-let avatarUrls = ref<string[]>([]);
-let dev_home = ref<string[]>([]);
-let dev_cnt = ref(0);
-
 //
 const activeName = ref("first");
 const handleClick = (tab: TabsPaneContext, event: Event) => {
-  console.log(tab, event);
+  // console.log(tab, event);
 };
 
 //
 axios.get(`https://final.anshang.live/api/data/repo/${name}`).then((res) => {
   dev_cnt.value = res.data.developers;
+  issue_cnt = res.data.issues;
+  // console.log(res.data);
 });
 //请求
 axios
@@ -415,9 +475,9 @@ axios
       option1 = {
         grid: {
           left: "20", // 固定左边刻度宽度
-          right: "10%",
+          right: "20",
           bottom: "10%",
-          top: "10",
+          top: "5",
           containLabel: true,
         },
         tooltip: {
@@ -561,26 +621,6 @@ axios
       option3 && myChart3.setOption(option3);
     }, 1);
   });
-
-//
-const Timer = ref("");
-let now = ref<string>("");
-let date = ref<string>("");
-let time = ref<string>("");
-let year = ref<string>("");
-let month = ref<string>("");
-let day = ref<string>("");
-onMounted(() => {
-  setInterval(() => {
-    now.value = new Date().toLocaleString();
-    date.value = now.value.split(" ")[0];
-    time.value = now.value.split(" ")[1];
-    year.value = date.value.split("/")[0];
-    month.value = date.value.split("/")[1];
-    day.value = date.value.split("/")[2];
-    Timer.value = `${year.value}年${month.value}月${day.value}日  北京时间${time.value}`;
-  }, 500);
-});
 
 const go = (url: string) => {
   axios.get(url).then((res) => {

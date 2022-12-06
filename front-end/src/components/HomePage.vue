@@ -181,8 +181,6 @@ h1 {
 <script setup lang="ts">
 import { reactive, ref } from "vue";
 import { Link, Search, Star, Delete } from "@element-plus/icons-vue";
-import { ta } from "element-plus/es/locale";
-import Developers from "./components/RepoPage.vue";
 import router from "../router";
 import axios from "axios";
 
@@ -191,10 +189,6 @@ let show = ref(false);
 let input = ref("");
 let choose = ref("");
 let repository_names: string[] = reactive<string[]>([]);
-// repository_names.push("geekan/HowToLiveLonger");
-// repository_names.push("Anduin2017/HowToCook");
-// repository_names.push("996icu/996.ICU");
-// repository_names.push("nodejs/node");
 const go = (name: string) => {
   window.location.href = "https://github.com/" + name;
 };
@@ -218,11 +212,8 @@ const query = (name: string) => {
 
 axios.get("https://final.anshang.live/api/data/repoAll").then((res) => {
   var data: any[] = res.data;
-  console.log(data);
-
   for (var i in data) {
     repository_names.push(`${data[i].first}/${data[i].second}`);
   }
-  console.log(repository_names);
 });
 </script>

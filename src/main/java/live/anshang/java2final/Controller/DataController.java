@@ -6,11 +6,13 @@ import live.anshang.java2final.DTO.Developer;
 import live.anshang.java2final.DTO.Repository;
 import live.anshang.java2final.Spider.GithubSpider;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.util.Pair;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Slf4j
@@ -37,18 +39,22 @@ public class DataController {
     }
 
     @GetMapping("repo/{repo}")
-    public List<Repository> getRepoList(@PathVariable("repo") String name) {
-        return repoRepository.findRepositoriesByName(name);
+    public List<Pair<String, String>> getRepoList(@PathVariable("repo") String name) {
+        return repoRepository.findRepositoriesByName(name).stream().map(repository ->
+             Pair.of(repository.getAuthor(), repository.getName())).distinct().toList();
     }
 
     @GetMapping("repoAll")
-    public List<Repository> getRepoList() {
-        return repoRepository.findAllByNameLike("");
+    public List<Pair<String, String>> getRepoList() {
+        return repoRepository.findAll().stream().map(repository ->
+                Pair.of(repository.getAuthor(), repository.getName())).distinct().toList();
     }
 
-    @GetMapping("developer")
-    public List<Developer> getDeveloperList() {
-        return null;
+    @GetMapping("{repo}/developer")
+    public List<Developer> getDeveloperList(@PathVariable("repo") String repo) {
+        Repository repository = repoRepository.findRepositoriesByName(repo).get(0);
+        List<Developer> developers = repository.getDevelopers();
+        return developers.stream().sorted(Comparator.comparing(Developer::getCommits).reversed()).limit(9).toList();
     }
 
     @PutMapping("repo")

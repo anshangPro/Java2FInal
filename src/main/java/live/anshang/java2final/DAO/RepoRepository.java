@@ -9,4 +9,6 @@ public interface RepoRepository extends JpaRepository<Repository, Long> {
     List<Repository> findRepositoriesByName(String name);
 
     List<Repository> findAllByNameLike(String s);
+
+    Repository getRepositoryByName(String name);
 }

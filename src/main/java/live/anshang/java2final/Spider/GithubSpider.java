@@ -23,18 +23,25 @@ public class GithubSpider {
     public static void main(String[] args) {
         getInfoByRepoURL("gnembon", "fabric-carpet");
     }
+    private static Pattern pattern = Pattern.compile("\\[.*\\]", Pattern.DOTALL);
 
     public static Repository getInfoByRepoURL(String author, String repo) {
-        Pattern pattern = Pattern.compile("\\[.*\\]", Pattern.DOTALL);
 
         Repository repository = new Repository();
         repository.setAuthor(author);
         repository.setName(repo);
-        List<Issue> issues = repository.getIssues();
-        List<Release> releases = repository.getReleases();
-        List<Commit> commits = repository.getCommits();
-        List<Developer> developers = repository.getDevelopers();
 
+        crabIssue(author, repo, repository);
+        crabRelease(author, repo, repository);
+        crabCommit(author, repo, repository);
+
+        int a = 1;
+
+        return repository;
+    }
+
+    private static void crabIssue(String author, String repo, Repository repository) {
+        List<Issue> issues = repository.getIssues();
         String issuesURL = String.format("https://api.github.com/repos/%s/%s/issues", author, repo);
         try {
             Connection issueCon = Jsoup.connect(issuesURL).ignoreContentType(true).ignoreHttpErrors(true)
@@ -61,7 +68,10 @@ public class GithubSpider {
         } catch (IOException e) {
             System.out.println("No issue");;
         }
+    }
 
+    private static void crabRelease(String author, String repo, Repository repository) {
+        List<Release> releases = repository.getReleases();
         String releaseURL = String.format("https://api.github.com/repos/%s/%s/releases", author, repo);
         try {
             Connection releaseCon = Jsoup.connect(releaseURL).ignoreContentType(true).ignoreHttpErrors(true)
@@ -84,7 +94,11 @@ public class GithubSpider {
         } catch (IOException e) {
             System.out.println("No issue");;
         }
+    }
 
+    private static void crabCommit(String author, String repo, Repository repository) {
+        List<Commit> commits = repository.getCommits();
+        List<Developer> developers = repository.getDevelopers();
         String commitURL = String.format("https://api.github.com/repos/%s/%s/commits", author, repo);
         HashMap<String, Developer> developerHashMap = new HashMap<>();
         try {
@@ -122,9 +136,6 @@ public class GithubSpider {
         } catch (IOException e) {
             System.out.println("No commit");;
         }
-        int a = 1;
-
-        return repository;
     }
 
     private static Date castToDate(Object date) {

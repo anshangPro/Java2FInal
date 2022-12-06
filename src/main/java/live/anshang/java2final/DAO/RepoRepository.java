@@ -8,7 +8,7 @@ import java.util.List;
 public interface RepoRepository extends JpaRepository<Repository, Long> {
     List<Repository> findRepositoriesByName(String name);
 
-    List<Repository> findAllByNameLike(String s);
+    List<Repository> findRepositoriesByNameAndAuthor(String name, String author);
 
     Repository getRepositoryByName(String name);
 }

@@ -1,16 +1,16 @@
 <template>
   <el-row>
-    <el-col :span="3"></el-col>
-    <el-col :span="18">
+    <el-col :span="2"></el-col>
+    <el-col :span="20">
       <el-card class="box-card" id="head" shadow="always" @click="go('')">
         <h1>GitHub Repository Visualization</h1>
       </el-card>
     </el-col>
-    <el-col :span="3"></el-col
+    <el-col :span="2"></el-col
   ></el-row>
   <el-row>
-    <el-col :span="3"></el-col>
-    <el-col :span="18">
+    <el-col :span="2"></el-col>
+    <el-col :span="20">
       <el-card class="box-card" shadow="hover">
         <el-row :gutter="20" class="row">
           <el-col :span="2" :offset="0" style="text-align: center">
@@ -36,11 +36,11 @@
         </el-row>
       </el-card>
     </el-col>
-    <el-col :span="3"></el-col>
+    <el-col :span="2"></el-col>
   </el-row>
   <el-row>
-    <el-col :span="3"></el-col>
-    <el-col :span="18">
+    <el-col :span="2"></el-col>
+    <el-col :span="20">
       <el-card
         class="box-card radius"
         shadow="hover"
@@ -72,7 +72,7 @@
         </el-row>
       </el-card>
     </el-col>
-    <el-col :span="3"></el-col>
+    <el-col :span="2"></el-col>
   </el-row>
 
   <router-view></router-view>

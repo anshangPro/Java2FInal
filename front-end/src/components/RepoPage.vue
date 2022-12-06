@@ -1,7 +1,7 @@
 <template>
   <el-row>
-    <el-col :span="3"></el-col>
-    <el-col :span="18">
+    <el-col :span="2"></el-col>
+    <el-col :span="20">
       <el-card
         class="box-card"
         id="head"
@@ -11,12 +11,12 @@
         <h1>{{ repository_name }}</h1>
       </el-card>
     </el-col>
-    <el-col :span="3"></el-col
+    <el-col :span="2"></el-col
   ></el-row>
   <!-- 展示card -->
   <el-row>
-    <el-col :span="3"></el-col>
-    <el-col :span="18">
+    <el-col :span="2"></el-col>
+    <el-col :span="20">
       <el-card class="box-card radius" id="main">
         <el-tabs
           v-model="activeName"
@@ -50,7 +50,7 @@
                 <el-row justify="center">
                   <div
                     style="
-                      width: 80%;
+                      width: 75%;
                       height: 100px;
                       background-color: antiquewhite;
                       opacity: 0.7;
@@ -144,7 +144,7 @@
                   display: inline-block;
                   /* background-color: antiquewhite; */
                   height: 65vh;
-                  width: 38%;
+                  width: 27%;
                   margin: 10px;
                 "
               >
@@ -157,14 +157,14 @@
                       margin-bottom: 0.5rem;
                     "
                   >
-                    Issue Count
+                    Issue Count{{}}
                   </h2>
                 </el-row>
                 <!-- issue count 展示区域 -->
                 <el-row justify="center">
                   <div
                     style="
-                      width: 80%;
+                      width: 75%;
                       height: 100px;
                       background-color: antiquewhite;
                       opacity: 0.7;
@@ -206,7 +206,7 @@
                   display: inline-block;
                   /* background-color: antiquewhite; */
                   height: 65vh;
-                  width: 58%;
+                  width: 44%;
                   margin: 10px;
                 "
               >
@@ -219,12 +219,48 @@
                       margin-bottom: 0.5rem;
                     "
                   >
-                    Typical Resolution Time
+                    Resolution Time
+                  </h2>
+                </el-row>
+                <!-- 典型解决时间 散点图  -->
+                <el-row justify="center">
+                  <div id="chart3" style="width: 500px; height: 500px"></div>
+                </el-row>
+              </div>
+              <!-- 表格 -->
+              <div
+                style="
+                  display: inline-block;
+                  /* background-color: antiquewhite; */
+                  height: 65vh;
+                  width: 24%;
+                  margin: 10px;
+                "
+              >
+                <!-- Typical Time -->
+                <el-row justify="center" style="margin-bottom: 0px">
+                  <h2
+                    style="
+                      font-size: 2.3rem;
+                      margin-top: 0.5rem;
+                      margin-bottom: 0.5rem;
+                    "
+                  >
+                    Typical Time
                   </h2>
                 </el-row>
                 <!-- 典型解决时间 柱状图  -->
                 <el-row justify="center">
-                  <div id="chart3" style="width: 500px; height: 500px"></div>
+                  <el-table
+                    :data="issue_time_infos"
+                    border
+                    style="width: 100%; margin-top: 5px"
+                    :height="455"
+                    :row-style="{ height: '81px' }"
+                  >
+                    <el-table-column prop="type" label="Type" width="100" />
+                    <el-table-column prop="value" label="Value in days" />
+                  </el-table>
                 </el-row>
               </div> </el-row
           ></el-tab-pane>
@@ -236,7 +272,7 @@
                   display: inline-block;
                   background-color: black;
                   height: 65vh;
-                  width: 45%;
+                  width: 44%;
                   margin: 10px;
                 "
               >
@@ -299,7 +335,7 @@
         </el-tabs>
       </el-card>
     </el-col>
-    <el-col :span="3"></el-col>
+    <el-col :span="2"></el-col>
   </el-row>
 </template>
 
@@ -409,6 +445,7 @@ import { reactive, ref } from "vue";
 import axios from "axios";
 import type { TabsPaneContext } from "element-plus";
 import * as echarts from "echarts";
+import { el, pa, tr } from "element-plus/es/locale";
 
 const route = useRoute();
 const router = useRouter();
@@ -416,8 +453,11 @@ let repository_name = router.currentRoute.value.params["repo_name"] as string;
 let name = repository_name.split("^")[1];
 repository_name = repository_name.replace("^", "/");
 let developers: repo_developer[] = reactive<repo_developer[]>([]);
+let issue_time_infos: any[] = reactive<any[]>([]);
+let issue_start_end: any[] = reactive<any[]>([]);
 let dev_names = ref<string[]>([]);
 let dev_commits = ref<number[]>([]);
+
 let avatarUrls = ref<string[]>([]);
 let dev_home = ref<string[]>([]);
 let dev_cnt = ref(0);
@@ -435,19 +475,18 @@ interface repo_developer {
 
 //
 const activeName = ref("first");
-const handleClick = (tab: TabsPaneContext, event: Event) => {
-  // console.log(tab, event);
-};
+const handleClick = (tab: TabsPaneContext, event: Event) => {};
 
 //
-axios.get(`https://final.anshang.live/api/data/repo/${name}`).then((res) => {
-  dev_cnt.value = res.data.developers;
-  issue_cnt = res.data.issues;
-  // console.log(res.data);
-});
-//请求
 axios
-  .get(`https://final.anshang.live/api/data/${name}/developer`)
+  .get(`https://final.anshang.live/api/data/${repository_name}`)
+  .then((res) => {
+    dev_cnt.value = res.data.developers;
+    issue_cnt.value = res.data.issues;
+  });
+//developer信息
+axios
+  .get(`https://final.anshang.live/api/data/${repository_name}/developer`)
   .then((res) => {
     for (var i in res.data) {
       let a = res.data[i];
@@ -500,127 +539,156 @@ axios
             name: "total commits",
             type: "bar",
             data: dev_commits.value,
+            itemStyle: {
+              color: " #95d475",
+            },
           },
         ],
       };
 
       option1 && myChart1.setOption(option1);
-
-      //饼图issue数量
-      var chartDom2 = document.getElementById("chart2")!;
-      var myChart2 = echarts.init(chartDom2);
-      var option2: EChartsOption;
-
-      option2 = {
-        tooltip: {
-          trigger: "item",
-        },
-        legend: {
-          top: "5%",
-          left: "center",
-        },
-        series: [
-          {
-            name: "Issue count",
-            type: "pie",
-            radius: ["37%", "70%"],
-            avoidLabelOverlap: false,
-            itemStyle: {
-              borderRadius: 10,
-              borderColor: "#fff",
-              borderWidth: 2,
-            },
-            label: {
-              show: false,
-              position: "center",
-            },
-            emphasis: {
-              label: {
-                show: true,
-                fontSize: "40",
-                fontWeight: "bold",
-              },
-            },
-            labelLine: {
-              show: false,
-            },
-            data: [
-              { value: 20, name: "Opening Issue" },
-              { value: 35, name: "Closed Issue" },
-            ],
-            center: ["50%", "50%"],
-          },
-        ],
-      };
-
-      option2 && myChart2.setOption(option2);
-
-      //柱状图展示各种时间
-      var chartDom3 = document.getElementById("chart3")!;
-      var myChart3 = echarts.init(chartDom3);
-      var option3: EChartsOption;
-
-      option3 = {
-        grid: {
-          top: "10px",
-          left: "10px",
-          right: "10px",
-          bottom: "10%",
-          containLabel: true,
-        },
-        xAxis: {
-          type: "category",
-          data: ["Average", "Extreme", "Difference", "Variance"],
-        },
-        yAxis: {
-          type: "value",
-        },
-        tooltip: {
-          trigger: "axis",
-          axisPointer: {
-            type: "shadow",
-          },
-        },
-        series: [
-          {
-            showBackground: true,
-            backgroundStyle: {
-              color: "rgba(180, 180, 180, 0.2)",
-            },
-            data: [
-              {
-                value: 100,
-                itemStyle: {
-                  color: "#95d475",
-                },
-              },
-              {
-                value: 150,
-                itemStyle: {
-                  color: " #fab6b6",
-                },
-              },
-              {
-                value: 130,
-                itemStyle: {
-                  color: " #f3d19e",
-                },
-              },
-              {
-                value: 110,
-                itemStyle: {
-                  color: " #b1b3b8",
-                },
-              },
-            ],
-            type: "bar",
-          },
-        ],
-      };
-
-      option3 && myChart3.setOption(option3);
     }, 1);
   });
+//issue信息
+axios
+  .get(`https://final.anshang.live/api/data/${repository_name}/issue`)
+  .then((res) => {
+    type EChartsOption = echarts.EChartsOption;
+    var a = res.data;
+    issue_time_infos.push({
+      type: "max",
+      value: msToDay(a.max),
+    });
+    issue_time_infos.push({
+      type: "min",
+      value: (a.min / 864).toFixed(2) + " seconds",
+    });
+    issue_time_infos.push({
+      type: "avg",
+      value: msToDay(a.avg),
+    });
+    issue_time_infos.push({
+      type: "diff",
+      value: msToDay(a.diff),
+    });
+    issue_time_infos.push({
+      type: "variance",
+      value: msToDay(a.variance),
+    });
+    open_cnt.value = a.opening;
+    close_cnt.value = a.closed;
+    for (var i in a.issueList) {
+      var time = a.issueList[i];
+      if (time.status == "closed") {
+        var start = Date.parse(time.createAt);
+        var end = Date.parse(time.closeAt);
+        var dif = (end - start) / 86400 / 1000;
+        // console.log(dif);
+        issue_start_end.push([time.createAt, dif]);
+      }
+    }
+
+    //饼图issue数量
+    var chartDom2 = document.getElementById("chart2")!;
+    var myChart2 = echarts.init(chartDom2);
+    var option2: EChartsOption;
+
+    option2 = {
+      tooltip: {
+        trigger: "item",
+      },
+      legend: {
+        top: "5%",
+        left: "center",
+      },
+      series: [
+        {
+          name: "Issue count",
+          type: "pie",
+          radius: ["37%", "70%"],
+          avoidLabelOverlap: false,
+          itemStyle: {
+            borderRadius: 10,
+            borderColor: "#fff",
+            borderWidth: 2,
+          },
+          label: {
+            show: false,
+            position: "center",
+          },
+          emphasis: {
+            label: {
+              show: true,
+              fontSize: "40",
+              fontWeight: "bold",
+            },
+          },
+          labelLine: {
+            show: false,
+          },
+          data: [
+            { value: open_cnt.value, name: "Opening Issue" },
+            { value: close_cnt.value, name: "Closed Issue" },
+          ],
+          center: ["50%", "50%"],
+        },
+      ],
+    };
+
+    option2 && myChart2.setOption(option2);
+    //散点图
+    var chartDom3 = document.getElementById("chart3")!;
+    var myChart3 = echarts.init(chartDom3);
+    var option3: EChartsOption;
+    option3 = {
+      grid: {
+        left: "1%", // 固定左边刻度宽度
+        right: "2%",
+        bottom: "13%",
+        top: "2%",
+        containLabel: true,
+      },
+      tooltip: {
+        formatter: function (params) {
+          // console.log(params);
+          var start = params.data[0].split("T")[0];
+          var dif = params.data[1].toFixed(2);
+          if (dif > 1) {
+            return `Start from ${start}</br>For ${dif} days`;
+          } else {
+            dif = (params.data[1] * 24).toFixed(2);
+            return `Start from ${start}</br>For ${dif} hours`;
+          }
+        },
+      },
+      xAxis: {
+        type: "time", // 设置类型为time
+        name: "创建日期", //x轴的标签
+        interval: 3600 * 24 * 1000 * 30 * 2, //3600 * 24 * 1000为一天，我这边是设置90天为间隔的，小伙伴们可以自己调整
+        nameLocation: "middle",
+      },
+      yAxis: {
+        type: "log", // 设置类型为time
+        name: "持续时常(对数)", //x轴的标签
+        interval: 1000,
+        //3600 * 24 * middle
+        nameLocation: "middle",
+      },
+      series: [
+        {
+          symbolSize: 6,
+          data: issue_start_end,
+          type: "scatter",
+        },
+      ],
+    };
+
+    option3 && myChart3.setOption(option3);
+  });
+
+const msToDay = (num: number) => {
+  return (num / 86400000).toFixed(2) + " days";
+};
 
 const go = (url: string) => {
   axios.get(url).then((res) => {

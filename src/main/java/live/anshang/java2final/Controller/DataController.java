@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import live.anshang.java2final.DAO.*;
 import live.anshang.java2final.DTO.Developer;
 import live.anshang.java2final.DTO.Repository;
+import live.anshang.java2final.DTO.RepositoryDTO;
 import live.anshang.java2final.Spider.GithubSpider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.util.Pair;
@@ -39,9 +40,17 @@ public class DataController {
     }
 
     @GetMapping("repo/{repo}")
-    public List<Pair<String, String>> getRepoList(@PathVariable("repo") String name) {
-        return repoRepository.findRepositoriesByName(name).stream().map(repository ->
-             Pair.of(repository.getAuthor(), repository.getName())).distinct().toList();
+    public RepositoryDTO getRepoList(@PathVariable("repo") String name) {
+        Repository repo = repoRepository.findRepositoriesByName(name).get(0);
+        RepositoryDTO res = new RepositoryDTO();
+        res.setId(repo.getId());
+        res.setAuthor(repo.getAuthor());
+        res.setName(repo.getName());
+        res.setIssues(repo.getIssues().size());
+        res.setCommits(repo.getCommits().size());
+        res.setDevelopers(repo.getDevelopers().size());
+        res.setReleases(repo.getReleases().size());
+        return res;
     }
 
     @GetMapping("repoAll")

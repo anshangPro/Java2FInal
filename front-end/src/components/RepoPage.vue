@@ -157,7 +157,7 @@
                       margin-bottom: 0.5rem;
                     "
                   >
-                    Issue Count{{}}
+                    Issues Count{{}}
                   </h2>
                 </el-row>
                 <!-- issue count 展示区域 -->
@@ -279,7 +279,7 @@
               <div
                 style="
                   display: inline-block;
-                  background-color: black;
+                  /* background-color: antiquewhite; */
                   height: 65vh;
                   width: 44%;
                   margin: 10px;
@@ -294,19 +294,39 @@
                       margin-bottom: 0.5rem;
                     "
                   >
-                    Opening Issues
+                    Opening Issues:{{ open_cnt }}
                   </h2>
                 </el-row>
                 <!-- issue详情展示 -->
                 <el-row justify="center">
-                  <div id="chart3" style="width: 500px; height: 500px"></div>
+                  <div
+                    id=""
+                    style="width: 100%; height: 500px; background-color: #fff"
+                  >
+                    <el-scrollbar>
+                      <el-card
+                        v-for="i in open_issues"
+                        :key="i"
+                        style="border-radius: 15px; margin-bottom: 10px"
+                        shadow="hover"
+                      >
+                        <h4>
+                          <span>#{{ i.id }}</span>
+                          <span> Start at {{ i.createAt.split("T")[0] }}</span>
+                        </h4>
+                        <h3>
+                          <span class="open">{{ i.title }}</span>
+                        </h3>
+                      </el-card>
+                    </el-scrollbar>
+                  </div>
                 </el-row>
               </div>
               <!-- close issue -->
               <div
                 style="
                   display: inline-block;
-                  background-color: black;
+                  /* background-color: antiquewhite; */
                   height: 65vh;
                   width: 45%;
                   margin: 10px;
@@ -321,26 +341,180 @@
                       margin-bottom: 0.5rem;
                     "
                   >
-                    Closed Issues
+                    Closed Issues: {{ close_cnt }}
                   </h2>
                 </el-row>
                 <!-- issue详情展示 -->
                 <el-row justify="center">
-                  <div id="chart3" style="width: 500px; height: 500px"></div>
+                  <div
+                    id=""
+                    style="width: 100%; height: 500px; background-color: #fff"
+                  >
+                    <el-scrollbar>
+                      <el-card
+                        v-for="i in close_issues"
+                        :key="i"
+                        style="border-radius: 15px; margin-bottom: 10px"
+                        shadow="hover"
+                      >
+                        <h4>
+                          <span>#{{ i.id }}</span>
+                          <span> . {{ i.createAt.split("T")[0] }}</span>
+                          <span> to {{ i.closeAt.split("T")[0] }}</span>
+                        </h4>
+                        <h3>
+                          <span class="close">{{ i.title }}</span>
+                        </h3>
+                      </el-card>
+                    </el-scrollbar>
+                  </div>
                 </el-row>
-              </div> </el-row
-          ></el-tab-pane>
-          <el-tab-pane label="Releases and Commits" name="fourth">
-            <div
-              style="
-                height: 72vh;
-                width: 100%;
-                background-color: black;
-                display: block;
-              "
-            ></div>
-            ></el-tab-pane
+              </div>
+            </el-row></el-tab-pane
           >
+          <el-tab-pane label="Releases and Commits" name="fourth">
+            <el-row>
+              <!-- 左边 -->
+              <div
+                style="
+                  display: inline-block;
+                  /* background-color: antiquewhite; */
+                  height: 65vh;
+                  width: 30%;
+                  margin: 10px;
+                "
+              >
+                <!-- commit数 -->
+                <el-row justify="center" style="margin-bottom: 0px">
+                  <h2
+                    style="
+                      font-size: 2.3rem;
+                      margin-top: 0.5rem;
+                      margin-bottom: 0.5rem;
+                    "
+                  >
+                    Commits Count
+                  </h2>
+                </el-row>
+                <!-- commit数 展示区域 -->
+                <el-row justify="center">
+                  <div
+                    style="
+                      width: 75%;
+                      height: 150px;
+                      background-color: antiquewhite;
+                      opacity: 0.7;
+                      display: flex;
+                      flex-direction: row;
+                      align-items: center;
+                      justify-content: center;
+                    "
+                  >
+                    <h1 style="font-size: 4rem; color: brown">
+                      {{ commits_cnt }}
+                    </h1>
+                  </div>
+                </el-row>
+
+                <!-- release数 -->
+                <el-row justify="center" style="margin-bottom: 0px">
+                  <h2
+                    style="
+                      font-size: 2.3rem;
+                      margin-top: 0.5rem;
+                      margin-bottom: 0.5rem;
+                    "
+                  >
+                    Releases Count
+                  </h2>
+                </el-row>
+                <!-- release数 展示区域 -->
+                <el-row justify="center">
+                  <div
+                    style="
+                      width: 75%;
+                      height: 150px;
+                      background-color: antiquewhite;
+                      opacity: 0.7;
+                      display: flex;
+                      flex-direction: row;
+                      align-items: center;
+                      justify-content: center;
+                    "
+                  >
+                    <h1 style="font-size: 4rem; color: brown">
+                      {{ releases_cnt }}
+                    </h1>
+                  </div>
+                </el-row>
+              </div>
+              <!-- 右边 -->
+              <div
+                style="
+                  display: inline-block;
+                  /* background-color: antiquewhite; */
+                  height: 65vh;
+                  width: 65%;
+                  margin: 10px;
+                "
+              >
+                <!-- commit分布 -->
+                <el-row justify="center" style="margin-bottom: 0px">
+                  <h2
+                    style="
+                      font-size: 2rem;
+                      margin-top: 0.5rem;
+                      margin-bottom: 0.5rem;
+                    "
+                  >
+                    Commits Distribution
+                  </h2>
+                </el-row>
+                <!-- Commits 分布图  -->
+                <el-row
+                  justify="center"
+                  style="margin-bottom: 0px; margin-top: 0px"
+                  ><el-button v-for="i in Object.keys(year_date_cnt)">
+                    <div @click="chooseYear(i)">{{ i }}</div>
+                  </el-button></el-row
+                >
+                <el-row justify="center">
+                  <div
+                    id="chart4"
+                    style="
+                      width: 95%;
+                      height: 170px;
+                      /* background-color: antiquewhite; */
+                    "
+                  ></div>
+                </el-row>
+                <!--  -->
+                <!-- Commits Between Releases图 -->
+                <el-row justify="center" style="margin-bottom: 0px">
+                  <h2
+                    style="
+                      font-size: 2rem;
+                      margin-top: 0.5rem;
+                      margin-bottom: 0.5rem;
+                    "
+                  >
+                    Commits Between Releases
+                  </h2>
+                </el-row>
+                <!-- Commits Between Releases图  -->
+                <el-row justify="center">
+                  <div
+                    id="chart5"
+                    style="
+                      width: 95%;
+                      height: 200px;
+                      /* background-color: antiquewhite; */
+                    "
+                  ></div>
+                </el-row>
+              </div>
+            </el-row>
+          </el-tab-pane>
         </el-tabs>
       </el-card>
     </el-col>
@@ -349,6 +523,23 @@
 </template>
 
 <style lang="css" scoped>
+h4 {
+  color: grey;
+  font-weight: 500;
+  font-size: 1rem;
+  margin: 0%;
+}
+.open {
+  color: #95d475;
+}
+.close {
+  color: #73767a;
+}
+h3 {
+  font-weight: 600;
+  font-size: 1.3rem;
+  margin: 0.3rem;
+}
 .iii {
   height: 2rem;
   background-color: aqua;
@@ -454,7 +645,7 @@ import { reactive, ref } from "vue";
 import axios from "axios";
 import type { TabsPaneContext } from "element-plus";
 import * as echarts from "echarts";
-import { el, pa, tr } from "element-plus/es/locale";
+import { da, el, en, pa, tr } from "element-plus/es/locale";
 
 const route = useRoute();
 const router = useRouter();
@@ -464,8 +655,11 @@ repository_name = repository_name.replace("^", "/");
 let developers: repo_developer[] = reactive<repo_developer[]>([]);
 let issue_time_infos: any[] = reactive<any[]>([]);
 let issue_start_end: any[] = reactive<any[]>([]);
+let issue_list: any[] = reactive<any[]>([]);
 let dev_names = ref<string[]>([]);
 let dev_commits = ref<number[]>([]);
+let open_issues = reactive<any[]>([]);
+let close_issues = reactive<any[]>([]);
 
 let avatarUrls = ref<string[]>([]);
 let dev_home = ref<string[]>([]);
@@ -473,6 +667,10 @@ let dev_cnt = ref(0);
 let issue_cnt = ref(0);
 let open_cnt = ref(0);
 let close_cnt = ref(0);
+let commits_cnt = ref(0);
+let releases_cnt = ref(0);
+
+let choose = ref("2022");
 
 interface repo_developer {
   id: number;
@@ -483,214 +681,435 @@ interface repo_developer {
 }
 
 //
-const activeName = ref("first");
-const handleClick = (tab: TabsPaneContext, event: Event) => {};
 
-//
-axios
-  .get(`https://final.anshang.live/api/data/${repository_name}`)
-  .then((res) => {
-    dev_cnt.value = res.data.developers;
-    issue_cnt.value = res.data.issues;
-  });
-//developer信息
-axios
-  .get(`https://final.anshang.live/api/data/${repository_name}/developer`)
-  .then((res) => {
-    for (var i in res.data) {
-      let a = res.data[i];
-      developers.push({
-        id: a.id,
-        name: a.name,
-        avatar: a.avatarUrl,
-        home: a.url,
-        commit: a.commits,
-      });
-      dev_names.value.push(a.name);
-      avatarUrls.value.push(a.avatarUrl);
-      dev_commits.value.push(a.commits);
-      dev_home.value.push(a.url);
-    }
+const renderPage = (name: any) => {
+  if (name == "first") setFirst();
+  else if (name == "second") setSecond();
+  else if (name == "third") setThird();
+  else if (name == "fourth") setFourth();
+};
 
-    //图表
-    setTimeout(function () {
-      type EChartsOption = echarts.EChartsOption;
+const setInfo = () => {
+  axios
+    .get(`https://final.anshang.live/api/data/${repository_name}`)
+    .then((res) => {
+      dev_cnt.value = res.data.developers;
+      issue_cnt.value = res.data.issues;
+      commits_cnt.value = res.data.commits;
+      releases_cnt.value = res.data.releases;
+    });
+};
+setInfo();
+const setFirst = () => {
+  //developer信息
+  axios
+    .get(`https://final.anshang.live/api/data/${repository_name}/developer`)
+    .then((res) => {
+      dev_names.value = [];
+      avatarUrls.value = [];
+      dev_commits.value = [];
+      dev_home.value = [];
+      for (let i in res.data) {
+        let a = res.data[i];
+        dev_names.value.push(a.name);
+        avatarUrls.value.push(a.avatarUrl);
+        dev_commits.value.push(a.commits);
+        dev_home.value.push(a.url);
+      }
 
-      var chartDom1 = document.getElementById("chart1")!;
-      var myChart1 = echarts.init(chartDom1);
-      var option1: EChartsOption;
-
-      option1 = {
-        grid: {
-          left: "20", // 固定左边刻度宽度
-          right: "20",
-          bottom: "10%",
-          top: "5",
-          containLabel: true,
-        },
-        tooltip: {
-          trigger: "axis",
-          axisPointer: {
-            type: "shadow",
+      setTimeout(() => {
+        type EChartsOption = echarts.EChartsOption;
+        let chartDom1 = document.getElementById("chart1")!;
+        let myChart1 = echarts.init(chartDom1);
+        let option1: EChartsOption;
+        option1 = {
+          grid: {
+            left: "20", // 固定左边刻度宽度
+            right: "20",
+            bottom: "10%",
+            top: "5",
+            containLabel: true,
           },
-        },
-        xAxis: {
-          max: "dataMax",
-        },
-        yAxis: {
-          inverse: true,
-          type: "category",
-          data: dev_names.value,
+          tooltip: {
+            trigger: "axis",
+            axisPointer: {
+              type: "shadow",
+            },
+          },
+          xAxis: {
+            max: "dataMax",
+          },
+          yAxis: {
+            inverse: true,
+            type: "category",
+            data: dev_names.value,
+          },
+          series: [
+            {
+              realtimeSort: true,
+              name: "total commits",
+              type: "bar",
+              data: dev_commits.value,
+              itemStyle: {
+                color: " #95d475",
+              },
+            },
+          ],
+        };
+        option1 && myChart1.setOption(option1);
+      }, 1);
+    });
+};
+setFirst();
+const setSecond = () => {
+  //issue信息
+  axios
+    .get(`https://final.anshang.live/api/data/${repository_name}/issue`)
+    .then((res) => {
+      let a = res.data;
+      open_cnt.value = a.opening;
+      close_cnt.value = a.closed;
+      issue_time_infos.splice(0, issue_time_infos.length);
+
+      issue_time_infos.push({
+        type: "max",
+        value: msToDay(a.max),
+      });
+      issue_time_infos.push({
+        type: "min",
+        value: (a.min / 864).toFixed(2) + " seconds",
+      });
+      issue_time_infos.push({
+        type: "avg",
+        value: msToDay(a.avg),
+      });
+      issue_time_infos.push({
+        type: "diff",
+        value: msToDay(a.diff),
+      });
+      issue_time_infos.push({
+        type: "variance",
+        value: msToDay(a.variance),
+      });
+      issue_start_end = [];
+      issue_list = a.issueList;
+
+      for (let i in a.issueList) {
+        let time = a.issueList[i];
+        if (time.status == "closed") {
+          let start = Date.parse(time.createAt);
+          let end = Date.parse(time.closeAt);
+          let dif = (end - start) / 86400 / 1000;
+          issue_start_end.push([time.createAt, dif]);
+        }
+      }
+
+      //饼图issue数量
+      type EChartsOption = echarts.EChartsOption;
+      let chartDom2 = document.getElementById("chart2")!;
+      let myChart2 = echarts.init(chartDom2);
+      let option2: EChartsOption;
+      option2 = {
+        legend: {
+          top: "5%",
+          left: "center",
         },
         series: [
           {
-            realtimeSort: true,
-            name: "total commits",
-            type: "bar",
-            data: dev_commits.value,
+            name: "Issue count",
+            type: "pie",
+            radius: ["37%", "70%"],
+            avoidLabelOverlap: false,
             itemStyle: {
-              color: " #95d475",
+              borderRadius: 10,
+              borderColor: "#fff",
+              borderWidth: 2,
             },
+            label: {
+              show: false,
+              position: "center",
+            },
+            emphasis: {
+              label: {
+                show: true,
+                fontSize: "40",
+                fontWeight: "bold",
+              },
+            },
+            labelLine: {
+              show: false,
+            },
+            data: [
+              {
+                value: open_cnt.value,
+                name: `Opening:${open_cnt.value}`,
+              },
+              {
+                value: close_cnt.value,
+                name: `Closed:${close_cnt.value}`,
+              },
+            ],
+            center: ["50%", "50%"],
           },
         ],
       };
+      option2 && myChart2.setOption(option2);
+      //散点图
+      let chartDom3 = document.getElementById("chart3")!;
+      let myChart3 = echarts.init(chartDom3);
+      let option3: EChartsOption;
+      option3 = {
+        grid: {
+          left: "1%", // 固定左边刻度宽度
+          right: "2%",
+          bottom: "13%",
+          top: "2%",
+          containLabel: true,
+        },
+        tooltip: {
+          formatter: function (params) {
+            let start = params.data[0].split("T")[0];
+            let dif = params.data[1].toFixed(2);
+            if (dif > 1) {
+              return `Start from ${start}</br>Last for ${dif} days`;
+            } else {
+              dif = (params.data[1] * 24).toFixed(2);
+              return `Start from ${start}</br>Last for ${dif} hours`;
+            }
+          },
+        },
+        xAxis: {
+          type: "time", // 设置类型为time
+          name: "创建日期", //x轴的标签
+          interval: 3600 * 24 * 1000 * 30 * 2, //3600 * 24 * 1000为一天，我这边是设置90天为间隔的，小伙伴们可以自己调整
+          nameLocation: "middle",
+        },
+        yAxis: {
+          type: "log", // 设置类型为time
+          name: "持续时常(对数)", //x轴的标签
+          interval: 1000,
+          //3600 * 24 * middle
+          nameLocation: "middle",
+        },
+        series: [
+          {
+            symbolSize: 6,
+            data: issue_start_end,
+            type: "scatter",
+          },
+        ],
+      };
+      option3 && myChart3.setOption(option3);
 
-      option1 && myChart1.setOption(option1);
-    }, 1);
-  });
-//issue信息
-axios
-  .get(`https://final.anshang.live/api/data/${repository_name}/issue`)
-  .then((res) => {
-    type EChartsOption = echarts.EChartsOption;
-    var a = res.data;
-    issue_time_infos.push({
-      type: "max",
-      value: msToDay(a.max),
+      //第三页的信息
+      open_issues = [];
+      close_issues = [];
+
+      issue_list = a.issueList;
+      for (const key in issue_list) {
+        if (issue_list[key].status == "open") {
+          open_issues.push(issue_list[key]);
+        } else {
+          close_issues.push(issue_list[key]);
+        }
+      }
     });
-    issue_time_infos.push({
-      type: "min",
-      value: (a.min / 864).toFixed(2) + " seconds",
-    });
-    issue_time_infos.push({
-      type: "avg",
-      value: msToDay(a.avg),
-    });
-    issue_time_infos.push({
-      type: "diff",
-      value: msToDay(a.diff),
-    });
-    issue_time_infos.push({
-      type: "variance",
-      value: msToDay(a.variance),
-    });
-    open_cnt.value = a.opening;
-    close_cnt.value = a.closed;
-    for (var i in a.issueList) {
-      var time = a.issueList[i];
-      if (time.status == "closed") {
-        var start = Date.parse(time.createAt);
-        var end = Date.parse(time.closeAt);
-        var dif = (end - start) / 86400 / 1000;
-        // console.log(dif);
-        issue_start_end.push([time.createAt, dif]);
+};
+const setThird = () => {
+  setSecond();
+};
+function formatDate(date: Date) {
+  var date = new Date(date);
+  var YY = date.getFullYear() + "-";
+  var MM =
+    (date.getMonth() + 1 < 10
+      ? "0" + (date.getMonth() + 1)
+      : date.getMonth() + 1) + "-";
+  var DD = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+  return YY + MM + DD;
+}
+let year_date_cnt = reactive<any>({});
+let commits = reactive<any>([]);
+let interval_cnt = reactive<any>([]);
+const chooseYear = (year: string) => {
+  type EChartsOption = echarts.EChartsOption;
+  let chartDom4 = document.getElementById("chart4")!;
+  let myChart4 = echarts.init(chartDom4);
+  let option4: EChartsOption;
+  function getVirtualData(year: string) {
+    const date = +echarts.time.parse(year + "-01-01");
+    const end = +echarts.time.parse(+year + 1 + "-01-01");
+    const dayTime = 3600 * 24 * 1000;
+    let data: [string, number][] = [];
+    for (let time = date; time < end; time += dayTime) {
+      var day = echarts.time.format(time, "{yyyy}-{MM}-{dd}", false);
+      if (year_date_cnt[year][day] == undefined) {
+        data.push([day, 0]);
+      } else {
+        var cnt = year_date_cnt[year][day];
+        data.push([day, cnt]);
       }
     }
-
-    //饼图issue数量
-    var chartDom2 = document.getElementById("chart2")!;
-    var myChart2 = echarts.init(chartDom2);
-    var option2: EChartsOption;
-
-    option2 = {
-      legend: {
-        top: "5%",
-        left: "center",
+    return data;
+  }
+  option4 = {
+    tooltip: {
+      formatter: function (params) {
+        return `${params.data[0]}</br>${params.data[1]} commits`;
       },
-      series: [
-        {
-          name: "Issue count",
-          type: "pie",
-          radius: ["37%", "70%"],
-          avoidLabelOverlap: false,
-          itemStyle: {
-            borderRadius: 10,
-            borderColor: "#fff",
-            borderWidth: 2,
-          },
-          label: {
-            show: false,
-            position: "center",
-          },
-          emphasis: {
-            label: {
-              show: true,
-              fontSize: "40",
-              fontWeight: "bold",
-            },
-          },
-          labelLine: {
-            show: false,
-          },
-          data: [
-            { value: open_cnt.value, name: "Opening Issue" },
-            { value: close_cnt.value, name: "Closed Issue" },
-          ],
-          center: ["50%", "50%"],
-        },
+    },
+    visualMap: {
+      min: 1,
+      max: 50,
+      pieces: [
+        { min: 16 },
+        { min: 8, max: 15 },
+        { min: 4, max: 7 },
+        { min: 1, max: 3 },
       ],
-    };
-
-    option2 && myChart2.setOption(option2);
-    //散点图
-    var chartDom3 = document.getElementById("chart3")!;
-    var myChart3 = echarts.init(chartDom3);
-    var option3: EChartsOption;
-    option3 = {
-      grid: {
-        left: "1%", // 固定左边刻度宽度
-        right: "2%",
-        bottom: "13%",
-        top: "2%",
-        containLabel: true,
+      calculable: true,
+      type: "piecewise",
+      orient: "horizontal",
+      left: "center",
+      top: 10,
+      inRange: {
+        color: ["rgb(220,233,200)", "rgb(123,201,111)", "rgb(25,98,35)"],
       },
-      tooltip: {
-        formatter: function (params) {
-          // console.log(params);
-          var start = params.data[0].split("T")[0];
-          var dif = params.data[1].toFixed(2);
-          if (dif > 1) {
-            return `Start from ${start}</br>For ${dif} days`;
-          } else {
-            dif = (params.data[1] * 24).toFixed(2);
-            return `Start from ${start}</br>For ${dif} hours`;
+    },
+    calendar: {
+      top: 50,
+      left: 30,
+      right: 30,
+      cellSize: ["auto", 13],
+      range: year,
+      itemStyle: {
+        borderWidth: 0.5,
+      },
+      yearLabel: { show: false },
+    },
+    series: {
+      type: "heatmap",
+      coordinateSystem: "calendar",
+      data: getVirtualData(year),
+    },
+  };
+  option4 && myChart4.setOption(option4);
+};
+const setFourth = () => {
+  //commit信息
+  axios
+    .get(`https://final.anshang.live/api/restful/${repository_name}/commit`)
+    .then((res) => {
+      let list = res.data;
+      for (let i in list) {
+        let commit_date = new Date(list[i].date);
+        commits.push(commit_date);
+        let year = commit_date.getFullYear().toString();
+        let date = formatDate(commit_date);
+        if (!Object.keys(year_date_cnt).includes(year)) {
+          year_date_cnt[year] = {};
+        } else {
+          let year_data = year_date_cnt[year];
+          if (!Object.keys(year_data).includes(date)) year_data[date] = 1;
+          else year_data[date]++;
+        }
+      }
+      chooseYear("2022");
+      //release信息
+      axios
+        .get(
+          `https://final.anshang.live/api/restful/${repository_name}/release`
+        )
+        .then((res) => {
+          let releases = res.data;
+          for (let i = releases.length - 1; i > 0; i--) {
+            let start = new Date(releases[i].createAt);
+            let end = new Date(releases[i - 1].createAt);
+            let count = 0;
+            for (const key in commits) {
+              if (start < commits[key] && commits[key] < end) {
+                count++;
+              }
+            }
+            interval_cnt.push([
+              releases[i].name,
+              releases[i - 1].name,
+              formatDate(end),
+              count,
+            ]);
           }
-        },
-      },
-      xAxis: {
-        type: "time", // 设置类型为time
-        name: "创建日期", //x轴的标签
-        interval: 3600 * 24 * 1000 * 30 * 2, //3600 * 24 * 1000为一天，我这边是设置90天为间隔的，小伙伴们可以自己调整
-        nameLocation: "middle",
-      },
-      yAxis: {
-        type: "log", // 设置类型为time
-        name: "持续时常(对数)", //x轴的标签
-        interval: 1000,
-        //3600 * 24 * middle
-        nameLocation: "middle",
-      },
-      series: [
-        {
-          symbolSize: 6,
-          data: issue_start_end,
-          type: "scatter",
-        },
-      ],
-    };
+          type EChartsOption = echarts.EChartsOption;
+          var chartDom5 = document.getElementById("chart5")!;
+          var myChart5 = echarts.init(chartDom5);
+          var option5: EChartsOption;
 
-    option3 && myChart3.setOption(option3);
-  });
+          // prettier-ignore
+          const data = interval_cnt;
+
+          const labelList = data.map(function (item: any) {
+            return item[1];
+          });
+          const dateList = data.map(function (item: any) {
+            return item[2];
+          });
+          const valueList = data.map(function (item: any) {
+            return item[3];
+          });
+
+          option5 = {
+            // Make gradient line here
+            visualMap: [
+              {
+                show: false,
+                type: "continuous",
+                seriesIndex: 1,
+                dimension: 0,
+                min: 0,
+                max: dateList.length - 1,
+              },
+            ],
+
+            title: [],
+            tooltip: {
+              trigger: "axis",
+              formatter: function (params) {
+                return `Update release at ${params[0].axisValue}</br>after ${params[0].data} commits`;
+              },
+            },
+            xAxis: [
+              {
+                data: dateList,
+                axisPointer: {},
+              },
+            ],
+            yAxis: [{}],
+            grid: {
+              left: "20", // 固定左边刻度宽度
+              right: "20",
+              bottom: "10%",
+              top: "5",
+              containLabel: true,
+            },
+            series: [
+              {
+                name: "value",
+                type: "line",
+                showSymbol: true,
+                data: valueList,
+              },
+            ],
+          };
+
+          option5 && myChart5.setOption(option5);
+        });
+    });
+};
+
+//
+const activeName = ref("first");
+const handleClick = (tab: TabsPaneContext, event: Event) => {
+  renderPage(tab.props.name);
+};
 
 const msToDay = (num: number) => {
   return (num / 86400000).toFixed(2) + " days";

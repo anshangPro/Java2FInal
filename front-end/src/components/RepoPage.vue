@@ -756,6 +756,7 @@ const setFirst = () => {
             },
           ],
         };
+        // @ts-ignore
         option1 && myChart1.setOption(option1);
       }, 1);
     });
@@ -853,6 +854,7 @@ const setSecond = () => {
           },
         ],
       };
+      // @ts-ignore
       option2 && myChart2.setOption(option2);
       //散点图
       let chartDom3 = document.getElementById("chart3")!;
@@ -868,11 +870,14 @@ const setSecond = () => {
         },
         tooltip: {
           formatter: function (params) {
+            // @ts-ignore
             let start = params.data[0].split("T")[0];
+            // @ts-ignore
             let dif = params.data[1].toFixed(2);
             if (dif > 1) {
               return `Start from ${start}</br>Last for ${dif} days`;
             } else {
+              // @ts-ignore
               dif = (params.data[1] * 24).toFixed(2);
               return `Start from ${start}</br>Last for ${dif} hours`;
             }
@@ -899,6 +904,7 @@ const setSecond = () => {
           },
         ],
       };
+      // @ts-ignore
       option3 && myChart3.setOption(option3);
 
       //第三页的信息
@@ -955,6 +961,7 @@ const chooseYear = (year: string) => {
   option4 = {
     tooltip: {
       formatter: function (params) {
+        // @ts-ignore
         return `${params.data[0]}</br>${params.data[1]} commits`;
       },
     },
@@ -993,6 +1000,7 @@ const chooseYear = (year: string) => {
       data: getVirtualData(year),
     },
   };
+  // @ts-ignore
   option4 && myChart4.setOption(option4);
 };
 const setFourth = () => {
@@ -1073,6 +1081,7 @@ const setFourth = () => {
             tooltip: {
               trigger: "axis",
               formatter: function (params) {
+                // @ts-ignore
                 return `Update release at ${params[0].axisValue}</br>after ${params[0].data} commits`;
               },
             },
@@ -1099,7 +1108,7 @@ const setFourth = () => {
               },
             ],
           };
-
+          // @ts-ignore
           option5 && myChart5.setOption(option5);
         });
     });

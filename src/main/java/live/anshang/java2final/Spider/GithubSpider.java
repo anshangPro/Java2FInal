@@ -57,6 +57,9 @@ public class GithubSpider {
                     issue.setCloseAt(castToDate(json.get("closed_at")));
                     issue.setStatus((String) json.get("state"));
                     issue.setTitle((String) json.get("title"));
+
+//                    Comment comment = new Comment();
+
                     issues.add(issue);
                 });
                 page++;
@@ -104,14 +107,16 @@ public class GithubSpider {
             while (true){
                 Document commitDOM = commitCon.data("page", String.valueOf(page)).data("per_page", "100").get();
                 System.out.printf("Done commit page %d\n", page);
-                JSONArray issueObj = (JSONArray) JSON.parse(commitDOM.body().text());
-                if (issueObj.size() == 0) break;
-                issueObj.forEach(j -> {
+                JSONArray commitObj = (JSONArray) JSON.parse(commitDOM.body().text());
+                if (commitObj.size() == 0) break;
+                commitObj.forEach(j -> {
                     JSONObject json = (JSONObject) j;
                     Commit commit = new Commit();
                     String mes = json.getJSONObject("commit").getString("message");
                     commit.setName(mes.substring(0, Math.min(mes.length(), 250)));
                     JSONObject authorObj = json.getJSONObject("commit").getJSONObject("author");
+                    String commitDate = json.getJSONObject("commit").getJSONObject("committer").getString("date");
+                    commit.setDate(castToDate(commitDate));
                     String authorName = authorObj.getString("name");
                     Developer au;
                     if (developerHashMap.containsKey(authorName)) {

@@ -1,26 +1,24 @@
 package live.anshang.java2final.DTO;
 
-
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
-public class Commit {
+public class Comment {
     @Id
     @GeneratedValue
     private long id;
 
     @Column(length = 255)
-    private String name;
+    private String author;
 
-    private Date date;
-
-    @ManyToOne
-    private Developer developer;
+    private String body;
 }

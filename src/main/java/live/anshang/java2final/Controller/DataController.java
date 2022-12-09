@@ -1,6 +1,9 @@
 package live.anshang.java2final.Controller;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import live.anshang.java2final.DAO.*;
 import live.anshang.java2final.DTO.*;
 import live.anshang.java2final.Spider.GithubSpider;
@@ -14,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @Slf4j
-@Api
+@Api(tags = "数据库相关交互")
 @EnableAsync
 @RestController
 @RequestMapping("/api/data")
@@ -37,6 +40,19 @@ public class DataController {
     }
 
     @GetMapping("{author}/{repo}")
+    @ApiOperation(value = "获取仓库基础信息", notes = "通过 作者 和 仓库名 获取仓库基础信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "author",
+                    value = "author",
+                    required = true,
+                    paramType = "path"
+            ),
+            @ApiImplicitParam(name = "repo",
+                    value = "repo",
+                    required = true,
+                    paramType = "path"
+            )
+    })
     public RepositoryDTO getRepoList(@PathVariable("repo") String name, @PathVariable("author") String author) {
         Repository repo = repoRepository.findRepositoriesByNameAndAuthor(name, author).get(0);
         RepositoryDTO res = new RepositoryDTO();
@@ -51,12 +67,26 @@ public class DataController {
     }
 
     @GetMapping("repoAll")
+    @ApiOperation(value = "获取仓库列表", notes = "获取一共有多少个仓库")
     public List<Pair<String, String>> getRepoList() {
         return repoRepository.findAll().stream().map(repository ->
                 Pair.of(repository.getAuthor(), repository.getName())).distinct().toList();
     }
 
     @GetMapping("{author}/{repo}/developer")
+    @ApiOperation(value = "获取仓库的开发者列表", notes = "通过 作者 和 仓库名 获取仓库的开发者列表，仅返回前9个")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "author",
+                    value = "author",
+                    required = true,
+                    paramType = "path"
+            ),
+            @ApiImplicitParam(name = "repo",
+                    value = "repo",
+                    required = true,
+                    paramType = "path"
+            )
+    })
     public List<Developer> getDeveloperList(@PathVariable("repo") String repo, @PathVariable("author") String author) {
         Repository repository = repoRepository.findRepositoriesByNameAndAuthor(repo, author).get(0);
         List<Developer> developers = repository.getDevelopers();
@@ -64,6 +94,19 @@ public class DataController {
     }
 
     @GetMapping("{author}/{repo}/issue")
+    @ApiOperation(value = "获取仓库issue", notes = "通过 作者 和 仓库名 获取仓库issue信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "author",
+                    value = "author",
+                    required = true,
+                    paramType = "path"
+            ),
+            @ApiImplicitParam(name = "repo",
+                    value = "repo",
+                    required = true,
+                    paramType = "path"
+            )
+    })
     public IssueDTO getIssueList(@PathVariable("repo") String repo, @PathVariable("author") String author) {
         Repository repository = repoRepository.findRepositoriesByNameAndAuthor(repo, author).get(0);
         List<Issue> issues = repository.getIssues();
@@ -90,6 +133,19 @@ public class DataController {
     }
 
     @PutMapping("repo")
+    @ApiOperation(value = "添加一个仓库", notes = "通过 作者 和 仓库名 获取仓库")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "author",
+                    value = "author",
+                    required = true,
+                    paramType = "query"
+            ),
+            @ApiImplicitParam(name = "repo",
+                    value = "repo",
+                    required = true,
+                    paramType = "query"
+            )
+    })
     public String addRepo(@RequestParam("author") String author,
                            @RequestParam("repo") String repo){
         Repository repository = GithubSpider.getInfoByRepoURL(author, repo);

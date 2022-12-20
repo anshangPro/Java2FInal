@@ -6,9 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface RepoRepository extends JpaRepository<Repository, Long> {
-    List<Repository> findRepositoriesByName(String name);
 
-    List<Repository> findRepositoriesByNameAndAuthor(String name, String author);
+  List<Repository> findRepositoriesByName(String name);
 
-    Repository getRepositoryByName(String name);
+  List<Repository> findRepositoriesByNameAndAuthor(String name, String author);
+
+  Repository getRepositoryByName(String name);
 }

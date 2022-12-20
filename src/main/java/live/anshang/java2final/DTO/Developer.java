@@ -14,16 +14,14 @@ import javax.persistence.Id;
 @Getter
 public class Developer {
 
-    @Id
-    @GeneratedValue
-    private long id;
+  String name;
+  @Id
+  @GeneratedValue
+  private long id;
+  private int commits = 0;
 
-    String name;
+  private String url;
 
-    private int commits = 0;
-
-    private String url;
-
-    private String avatarUrl;
+  private String avatarUrl;
 
 }

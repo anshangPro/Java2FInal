@@ -16,23 +16,21 @@ import java.util.List;
 @Getter
 public class Repository {
 
-    @Id
-    @GeneratedValue
-    private long id;
+  String name;
+  String author;
+  @Id
+  @GeneratedValue
+  private long id;
+  @OneToMany
+  private List<Commit> commits = new ArrayList<>();
 
-    String name;
-    String author;
+  @OneToMany
+  private List<Release> releases = new ArrayList<>();
 
-    @OneToMany
-    private List<Commit> commits = new ArrayList<>();
+  @OneToMany
+  private List<Issue> issues = new ArrayList<>();
 
-    @OneToMany
-    private List<Release> releases = new ArrayList<>();
-
-    @OneToMany
-    private List<Issue> issues = new ArrayList<>();
-
-    @OneToMany
-    private List<Developer> developers = new ArrayList<>();
+  @OneToMany
+  private List<Developer> developers = new ArrayList<>();
 
 }

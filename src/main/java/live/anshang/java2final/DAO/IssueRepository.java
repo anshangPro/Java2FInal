@@ -4,4 +4,5 @@ import live.anshang.java2final.DTO.Issue;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface IssueRepository extends JpaRepository<Issue, Long> {
+
 }

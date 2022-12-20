@@ -13,12 +13,13 @@ import javax.persistence.*;
 @Setter
 @Getter
 public class Comment {
-    @Id
-    @GeneratedValue
-    private long id;
 
-    @Column(length = 255)
-    private String author;
+  @Id
+  @GeneratedValue
+  private long id;
 
-    private String body;
+  @Column(length = 255)
+  private String author;
+
+  private String body;
 }

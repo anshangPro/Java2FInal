@@ -13,17 +13,18 @@ import java.util.List;
 @Setter
 @Getter
 public class Issue {
-    @Id
-    @GeneratedValue
-    private long id;
 
-    private String title;
+  @Id
+  @GeneratedValue
+  private long id;
 
-    private String status;
+  private String title;
 
-    private Date createAt;
+  private String status;
 
-    private Date closeAt;
+  private Date createAt;
+
+  private Date closeAt;
 //
 //    @OneToMany
 //    private List<Comment> comments = new ArrayList<>();

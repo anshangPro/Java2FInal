@@ -13,11 +13,12 @@ import java.util.Date;
 @Setter
 @Getter
 public class Release {
-    @Id
-    @GeneratedValue
-    private long id;
 
-    private String name;
+  @Id
+  @GeneratedValue
+  private long id;
 
-    private Date createAt;
+  private String name;
+
+  private Date createAt;
 }

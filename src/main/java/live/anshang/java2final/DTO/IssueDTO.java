@@ -12,15 +12,14 @@ import java.util.List;
 @Setter
 @Getter
 public class IssueDTO {
-    private int total;
-    private int opening;
-    private int closed;
 
-    private double avg;
-    private long max;
-    private long min;
-    private long diff;
-    private double variance;
-
-    List<Issue> issueList;
+  List<Issue> issueList;
+  private int total;
+  private int opening;
+  private int closed;
+  private double avg;
+  private long max;
+  private long min;
+  private long diff;
+  private double variance;
 }

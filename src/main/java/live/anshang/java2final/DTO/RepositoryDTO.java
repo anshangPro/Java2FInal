@@ -14,17 +14,15 @@ import java.util.List;
 @Getter
 public class RepositoryDTO {
 
-    private long id;
+  String name;
+  String author;
+  private long id;
+  private int commits;
 
-    String name;
-    String author;
+  private int releases;
 
-    private int commits;
+  private int issues;
 
-    private int releases;
-
-    private int issues;
-
-    private int developers;
+  private int developers;
 
 }

@@ -12,15 +12,16 @@ import java.util.Date;
 @Setter
 @Getter
 public class Commit {
-    @Id
-    @GeneratedValue
-    private long id;
 
-    @Column(length = 255)
-    private String name;
+  @Id
+  @GeneratedValue
+  private long id;
 
-    private Date date;
+  @Column(length = 255)
+  private String name;
 
-    @ManyToOne
-    private Developer developer;
+  private Date date;
+
+  @ManyToOne
+  private Developer developer;
 }
